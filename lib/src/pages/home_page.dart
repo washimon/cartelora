@@ -11,11 +11,19 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.amber,
       appBar: AppBar(
-        title: Text('Cartelora'),
+        backgroundColor: Colors.deepOrange,
+        elevation: 0.0,
+        title: Text(
+          'Cartelora',
+          style: TextStyle(
+            color: Colors.black
+          ),
+        ),
         actions: <Widget>[
           IconButton(
-            icon: Icon(Icons.search), 
+            icon: Icon(Icons.search, color: Colors.amber), 
             onPressed: () {}
           )
         ],
@@ -38,18 +46,20 @@ class MovieCategories extends StatelessWidget {
     return Column(
       children: [
         Container(
+          padding: EdgeInsets.symmetric(vertical: 15.0, horizontal: 15.0),
           alignment: Alignment.centerLeft,
-          padding: EdgeInsets.symmetric(vertical: 10.0),
           child: Text(
             'Populares',
-            style: Theme.of(context).textTheme.headline5,
-            textAlign: TextAlign.start,
+            style: TextStyle(
+              fontSize: 22.0,
+              fontWeight: FontWeight.w600
+            ),
           ),
         ),
         ChangeNotifierProvider(
           create: (_) => _ProviderModel(),
           child: SwiperMoviesByCategorie()
-        )
+        ),
       ],
     );
   }
@@ -63,7 +73,7 @@ class SwiperMoviesByCategorie extends StatefulWidget {
 
 class _SwiperMoviesByCategorieState extends State<SwiperMoviesByCategorie> {
 
-  final MovieProvider provider = MovieProvider();  
+  final MovieProvider provider = MovieProvider();
 
   @override
   void initState() {
@@ -166,6 +176,10 @@ class _Card2 extends StatelessWidget {
         itemCount: widget.movies.length,
         pageSnapping: false,
         itemBuilder: (BuildContext context, int index) {
+
+          final movie = widget.movies[index];
+          movie.uniqueId = 'ui${movie.id}';
+
           return Container(
             margin: EdgeInsets.symmetric(horizontal: 10.0),
             child: Column(
@@ -176,13 +190,16 @@ class _Card2 extends StatelessWidget {
                   ),
                   margin: EdgeInsets.symmetric(vertical: 5.0),
                   height: screenSize.height * 0.2,
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(15.0),
-                    child: FadeInImage(
-                      placeholder: AssetImage('assets/img/dots-loading.gif'),
-                      image: NetworkImage(widget.movies[index].getUrlImg()),
-                      fit: BoxFit.cover,
-                    )
+                  child: GestureDetector(
+                    onTap: () => Navigator.pushNamed(context, 'movie', arguments: movie),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(15.0),
+                      child: FadeInImage(
+                        placeholder: AssetImage('assets/img/dots-loading.gif'),
+                        image: NetworkImage(widget.movies[index].getPosterPath()),
+                        fit: BoxFit.cover,
+                      )
+                    ),
                   ),
                 ),
                 Text(
@@ -216,7 +233,7 @@ class SwiperMovies extends StatelessWidget {
         if (snapshot.hasData) {
           if (movies.length == 0) return Center(child: Text('Algo salió mal'));
           
-          return _MovieCards(movieUrls: movies);
+          return _MovieCards(movies: movies);
         } else {
           return Container(
             alignment: Alignment.center,
@@ -231,10 +248,10 @@ class SwiperMovies extends StatelessWidget {
 
 class _MovieCards extends StatelessWidget {
 
-  final List<Movie> movieUrls;
+  final List<Movie> movies;
 
   _MovieCards({
-    @required this.movieUrls
+    @required this.movies
   });
 
   @override
@@ -248,23 +265,29 @@ class _MovieCards extends StatelessWidget {
       width: screenSize.width,
       // color: Colors.amber,
       child: Swiper(
-        itemCount: movieUrls.length,
+        itemCount: movies.length,
         itemWidth: screenSize.width * 0.7,
         layout: SwiperLayout.STACK,
         itemBuilder: (BuildContext context, int index) {
 
-          final String urlImg = movieUrls[index].getUrlImg();
-
-          return ClipRRect(
-            borderRadius: BorderRadius.circular(20.0),
-            child: FadeInImage(
-              placeholder: AssetImage('assets/img/dots-loading.gif'),
-              image: NetworkImage(urlImg),
-              fit: BoxFit.cover,
-              fadeOutDuration: Duration(milliseconds: 250),
-              fadeInDuration: Duration(milliseconds: 250),
-              fadeInCurve: Curves.fastLinearToSlowEaseIn,
-              fadeOutCurve: Curves.fastLinearToSlowEaseIn,
+          final String urlImg = movies[index].getPosterPath();
+          movies[index].uniqueId = 'ui${movies[index].id}';
+          return GestureDetector(
+            onTap: () => Navigator.pushNamed(context, 'movie', arguments: movies[index]),
+            child: Hero(
+              tag: movies[index].uniqueId,
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(20.0),
+                child: FadeInImage(
+                  placeholder: AssetImage('assets/img/dots-loading.gif'),
+                  image: NetworkImage(urlImg),
+                  fit: BoxFit.cover,
+                  fadeOutDuration: Duration(milliseconds: 250),
+                  fadeInDuration: Duration(milliseconds: 250),
+                  fadeInCurve: Curves.fastLinearToSlowEaseIn,
+                  fadeOutCurve: Curves.fastLinearToSlowEaseIn
+                ),
+              ),
             ),
           );
         }

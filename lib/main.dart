@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:cartelora/src/pages/home_page.dart';
+import 'package:cartelora/src/pages/movie_page.dart';
 
 void main() => runApp(MyApp());
 
@@ -12,7 +13,8 @@ class MyApp extends StatelessWidget {
       title: 'Cartelora',
       initialRoute: 'home',
       routes: {
-        'home': (BuildContext context) => HomePage()
+        'home': (BuildContext context) => HomePage(),
+        'movie': (BuildContext context) => MoviePage(),
       },
     );
   }

@@ -14,6 +14,7 @@ class Movies {
 
 class Movie {
   
+  String uniqueId;
   double popularity;
   int voteCount;
   bool video;
@@ -44,6 +45,7 @@ class Movie {
       this.voteAverage,
       this.overview,
       this.releaseDate,
+      this.uniqueId
   });
 
 
@@ -81,11 +83,23 @@ class Movie {
       "release_date": "${releaseDate.year.toString().padLeft(4, '0')}-${releaseDate.month.toString().padLeft(2, '0')}-${releaseDate.day.toString().padLeft(2, '0')}",
   };
 
-  String getUrlImg() {
+  String getPosterPath() {
     if (posterPath == null) {
       return 'https://thumbs.dreamstime.com/b/no-image-available-icon-photo-camera-flat-vector-illustration-132483097.jpg';
     } else {
-      return 'https://image.tmdb.org/t/p/original/$posterPath';
+      return 'https://image.tmdb.org/t/p/w300$posterPath';
     }
+  }
+
+  String getBackdropPath() {
+    if (posterPath == null) {
+      return 'https://thumbs.dreamstime.com/b/no-image-available-icon-photo-camera-flat-vector-illustration-132483097.jpg';
+    } else {
+      return 'https://image.tmdb.org/t/p/w500$backdropPath';
+    }
+  }
+
+  String getSimpleDate() {
+    return "${releaseDate.year.toString().padLeft(4, '0')}-${releaseDate.month.toString().padLeft(2, '0')}-${releaseDate.day.toString().padLeft(2, '0')}";
   }
 }

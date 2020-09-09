@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 
+import 'package:cartelora/src/models/genre.dart';
 import 'package:http/http.dart' as http;
 
 import 'package:cartelora/src/models/movie.dart';
@@ -51,5 +52,16 @@ class MovieProvider {
     List<Movie> movies = Movies.fromJsonList(decodedData['results']).items;
 
     return movies;
+  }
+
+  Future<List<Genre>> getGenres() async {
+    final _uri = Uri.https(_authority, '3/genre/movie/list', { 'api_key': _apiKey, 'language': _language });
+    final resp = await http.get(_uri);
+    final decodedData = json.decode(resp.body);
+    // print(decodedData);
+    if (decodedData['success'] != null) return [];
+    List<Genre> genres = Genres.fromJsonList(decodedData['genres']).genres;
+
+    return genres;
   }
 }
